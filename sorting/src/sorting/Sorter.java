@@ -1,6 +1,6 @@
 package sorting;
 
-import java.util.Random;
+import java.util.*;
 
 public class Sorter {
 	
@@ -232,6 +232,23 @@ public class Sorter {
 		qsort(arr, j+1, high);
 		
 	}	
+	
+	
+	/** RADIX SORT */
+	
+	public void radixSort(int[] arr, int maxDigits){
+		
+//		Queue<Integer>[] buckets = new LinkedList<>[10];
+		
+		for(int n = 1; n <= maxDigits ; n++){
+			
+		}
+		
+	}
+	
+	private int getLastDigit(int n, int pos){
+		return (n/(int)Math.pow(10, pos-1)) % 10;
+	}
 	
 	public static void main(String[] args) {
 		Sorter s = new Sorter();
