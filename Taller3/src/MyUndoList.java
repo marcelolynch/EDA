@@ -55,11 +55,11 @@ public class MyUndoList<T> implements SortedList<T>{
 	public void undo() {
 		Node<T> toErase = undoFirst;
 		if(toErase == null)
-			throw new CurtiteException();
+			throw new IllegalStateException();
 		
 		undoFirst = toErase.undoNext;
 		
-		if(node.prev != null){
+		if(toErase.prev != null){
 			toErase.prev.next = toErase.next;
 		}
 		else{
@@ -78,7 +78,7 @@ public class MyUndoList<T> implements SortedList<T>{
 		Node<T> n = first;
 		while(n != null){
 			System.out.print(n.elem);
-			System.out.println(" ");
+			System.out.print(" ");
 			n = n.next;
 		}
 	}
