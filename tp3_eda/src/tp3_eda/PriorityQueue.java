@@ -31,18 +31,21 @@ public class PriorityQueue<T> {
 		Node<Queue<T>> curr = first;
 		Node<Queue<T>> prev = null;
 		while(curr != null && curr.priority < priority){
-			curr = curr.next;
 			prev = curr;
+			curr = curr.next;
 		}
 		
-		if(curr == null)
+		if(curr == null){
 			prev.next = new Node<Queue<T>>(new Queue<T>(), curr, priority);
+			prev.next.queue.enqueue(elem);
+		}
 		
 		else if(curr.priority == priority){
 			curr.queue.enqueue(elem);
 		}
 		else{ //curr.priority > priority. Agrego un nuevo nodo
 			prev.next = new Node<Queue<T>>(new Queue<T>(), curr, priority);
+			prev.next.queue.enqueue(elem);
 		}
 		
 	}

@@ -6,11 +6,12 @@ public class PriorityQueueTest {
 		q.enqueue(8,1);
 		q.enqueue(1,10);
 		q.enqueue(3,1);
-		q.enqueue(4, -1);
+		q.enqueue(4, 2);
 		q.enqueue(4, 5);
 		
-		while(!q.isEmpty())
+		while(!q.isEmpty()){
 			System.out.println(q.dequeue());
+		}
 	}
 	
 	
