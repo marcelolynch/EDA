@@ -31,7 +31,7 @@ public class Printer {
 		
 		while(simTime-- > 0){
 			if(rand.nextDouble() < arrivalProbability){
-				queue.enqueue(new PrintJob());
+				queue.enqueue(new PrintJob(simTime));
 				totalJobs++;
 			}
 			
@@ -40,12 +40,13 @@ public class Printer {
 			}else{
 				jobsDone++;
 				System.out.print("To print: ");
-				System.out.print(queue.dequeue());//Saco un trabajo
+				PrintJob task = queue.dequeue(); //Saco un trabajo
+				System.out.print(task);
 				
 				double eta = minServiceTime + rand.nextDouble()*(maxServiceTime - minServiceTime + 1); 
 				hourglass = (int)eta; // La pone a trabajar
 				
-				waitingAvg = (waitingAvg + hourglass)/2.0;
+				waitingAvg = (waitingAvg + task.age(simTime))/2.0;
 				
 				System.out.print("   ETA: ");
 				System.out.println(hourglass);
@@ -67,7 +68,7 @@ public class Printer {
 		}
 	
 	public static void main(String[] args) {
-		new Printer(100000).simulate();
+		new Printer(100).simulate();
 	}
 	
 }
