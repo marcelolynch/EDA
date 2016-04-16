@@ -1,6 +1,10 @@
 package tp5_eda;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class BinarySearchTree<T> extends Tree<T> {
 		private static class Node<T>{
@@ -220,7 +224,100 @@ public class BinarySearchTree<T> extends Tree<T> {
 		
 		//d
 		public void printAncestors(T key){
+			List<T> list = new ArrayList<T>();
+			Node<T> curr = root;
+			while(curr != null && !curr.value.equals(key)){
+				list.add(curr.value);
+				int c = cmp.compare(key, curr.value);
+				if(c < 0){
+					curr = curr.left;
+				}
+				else{
+					curr = curr.right;
+				}
+			}
+			if(curr != null)
+				for(T t: list)
+					System.out.println(t);
 			
+		}
+		
+		public void printDescendants(T key){
+			boolean found = false;
+			Node<T> curr = root;
+			while(curr != null && !found){
+				int c = cmp.compare(key, curr.value);
+				if(c == 0){
+					found = true;
+				}
+				else if(c < 0){
+					curr = curr.left;
+				}
+				else{
+					curr = curr.right;
+				}
+			}
+			
+			if(curr != null){
+				NodeOperation<T> print = new NodeOperation<T>() {
+			
+				@Override
+				public void apply(T value) {
+						System.out.println(value);
+					}
+				
+				};
+			processInOrder(curr.left, print);
+			processInOrder(curr.right, print);
+			}			
+		}
+		
+		/*Ejercicio 9
+ 		Agregarle al árbol binario de búsqueda métodos que permitan construir iteradores para obtener los
+		nodos según recorridos preorder, inorder y postorder.*/
+
+		private class preOrderIterator implements Iterator<T>{
+			
+			private Stack<Node<T>> stack;
+
+			public preOrderIterator(Node<T> first){
+				stack = new Stack<Node<T>>();
+				if(first != null){
+					stack.push(first);
+				}
+				
+			}
+			
+			private void fillStack(Node<T> node){
+				if(node == null)
+					return;
+				if(node.right != null){
+					stack.push(node.right);
+				}
+				if(node.left != null){
+					stack.push(node.left);
+					}
+			}
+			
+			@Override
+			public boolean hasNext() {
+				return !stack.isEmpty();
+			}
+
+			@Override
+			public T next() {
+				if(!hasNext())
+					throw new NoSuchElementException();
+				
+				Node<T> popped = stack.pop();
+				T next = popped.value;
+				fillStack(popped);
+				return next;
+			}
+			
+		}
+		public Iterator<T> preOrderIterator(){
+			return new preOrderIterator(root);
 		}
 		
 		
@@ -241,23 +338,20 @@ public class BinarySearchTree<T> extends Tree<T> {
 			t.insert(29);
 			t.insert(16);
 			t.insert(32);
-			t.processInOrder(new NodeOperation<Integer>() {
+		/*	t.processInOrder(new NodeOperation<Integer>() {
 				
 				@Override
 				public void apply(Integer value) {
 					System.out.println(value);					
 				}
 			});
+		*/
+			//t.printDescendants(16);
+			Iterator<Integer> iterator = t.preOrderIterator();
 			
-			System.out.println(t.contains(10));
-			System.out.println(t.contains(4));
-			System.out.println(t.contains(123));
-			System.out.println(t.contains(29));
-			
-			System.out.println(t.contains(29));
-			System.out.println(t.contains(16));
-			System.out.println(t.numberOfLeaves());
-			System.out.println(t.greatestElem());
+			while(iterator.hasNext()){
+				System.out.println(iterator.next());
+			}
 			
 		}
 		

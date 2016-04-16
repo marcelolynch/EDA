@@ -107,7 +107,7 @@ public class Tree<T> {
 				return true;
 			
 			int[] heights = new int[2];
-			return isAVL(tree.root.right, null, null, cmp, heights, 1) && isAVL(tree.root.right, null, null, cmp, heights, 1)
+			return isAVL(tree.root.left, null, null, cmp, heights, 0) && isAVL(tree.root.right, null, null, cmp, heights, 1)
 					&& Math.abs(heights[0] - heights[1]) < 1;
 			}
 
