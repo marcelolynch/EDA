@@ -141,13 +141,13 @@ public class AVL<T>{
 		 * si el factor de balance de la raiz es en modulo mayor que uno. 
 		 * Si no, no hace nada. Devuelve el subarbol balanceado (si hubo rotaciones cambia la raiz) */
 		private Node<T> balance(Node<T> node){
-			int bf = node.balanceFactor();
-			if(node == null || Math.abs(bf) <= 1){
+			if(node == null || Math.abs(node.balanceFactor()) <= 1){
 					return node; // No hay que rebalancear
 			}
-			
+			int bf = node.balanceFactor();
+
 			if(bf > 0){ //Desbalance a la izquierda
-				if(node.left.balanceFactor() > 0){ //Doble izquierda: rotacion simple a derecha
+				if(node.left.balanceFactor() >= 0){ //Doble izquierda: rotacion simple a derecha
 					node = rightRotate(node);
 				}
 				else{ //Rotacion primero a izquierda del hijo izquierdo y luego a izquierda del padre
@@ -157,7 +157,7 @@ public class AVL<T>{
 				
 			}
 			else{ //Desbalance a la derecha
-				if(node.right.balanceFactor() < 0){ //Doble derecha: rotacion simple a izquierda
+				if(node.right.balanceFactor() <= 0){ //Doble derecha: rotacion simple a izquierda
 					node = leftRotate(node);
 				}
 				else{  //Rotacion primero a derecha del hijo derecho y luego a izquierda del padre
@@ -215,29 +215,31 @@ public class AVL<T>{
 			else if(comp < 0){
 				node.left = delete(node.left, key);
 			}
-			
-			//comp == 0
-			
-			if(node.right == null)
-				return node.left; //Si solo existe left, lo devuelvo. De ser ambos null devuelve null
-			else if(node.left == null) //Solo esta el hijo derecho
-				return node.right; 
-			
-			//Tiene los dos hijos. Busco el minimo a la derecha
-			Node<T> curr = node.right.left;
-			Node<T> prev = node.left; 
-			
-			while(curr.left != null){
-				prev = curr;
-				curr = curr.left;
+			else{
+				if(node.right == null){
+					node = node.left; //Si solo existe left, lo devuelvo. De ser ambos null devuelve null
+				}
+				else if(node.left == null){ //Solo esta el hijo derecho
+					node = node.right;
+				}
+				else{	//Busco el minimo a la derecha
+					Node<T> curr = node.right.left;
+					Node<T> prev = node.right; 
+					while(curr != null){
+						prev = curr;
+						curr = curr.left;
+					}
+					T aux = node.value;
+					node.value = prev.value; //Paso el minimo a la raiz
+					prev.value = aux; //Y el valor a eliminar a la hoja
+				
+					node.right = delete(node.right, key); //Ahora tengo que bajar hasta que quede en una hoja, para borrarla 
+														 // y subir rebalanceando
+				}
 			}
 			
-			node.value = prev.value; //Paso el minimo a la raiz
-			prev.left = null;	//
-			
-			return node;
-			
-			
+			fixHeight(node);
+			return balance(node);
 		}
 
 		
@@ -326,6 +328,10 @@ public class AVL<T>{
 			t.insert(14);
 			t.insert(15);
 			t.insert(16);
+			
+			t.delete(17);
+			t.delete(32);
+			
 			t.processInOrder(new NodeOperation<Integer>() {
 				
 				@Override

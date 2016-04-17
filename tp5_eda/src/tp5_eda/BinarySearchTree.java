@@ -327,6 +327,7 @@ public class BinarySearchTree<T> extends Tree<T> {
 			t.insert(29);
 			t.insert(16);
 			t.insert(32);
+			
 		/*	t.processInOrder(new NodeOperation<Integer>() {
 				
 				@Override
