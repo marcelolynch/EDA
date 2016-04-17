@@ -123,11 +123,12 @@ public class AVL<T>{
 			}
 			
 			fixHeight(node); //Se llama de abajo para arriba: los hijos ya tienen siempre la altura nueva
-		//	System.out.println("Node: " + node.value + " height: " + node.height);
-			return balance(node);
+			
+			return balance(node); //Como es en profundidad, agarro primero al mas profundo que se desbalancea siempre
 		}
 
 		
+		/** Actualiza la altura de un nodo a partir de la altura de sus hijos */
 		private void fixHeight(Node<T> node){
 			if(node == null) //No pasa, pero por las dudas
 				return;
@@ -135,6 +136,10 @@ public class AVL<T>{
 			}
 		
 		
+		
+		/**Balancea un subarbol (el nodo parametro es la raiz) 
+		 * si el factor de balance de la raiz es en modulo mayor que uno. 
+		 * Si no, no hace nada. Devuelve el subarbol balanceado (si hubo rotaciones cambia la raiz) */
 		private Node<T> balance(Node<T> node){
 			int bf = node.balanceFactor();
 			if(node == null || Math.abs(bf) <= 1){
@@ -165,9 +170,6 @@ public class AVL<T>{
 			
 		}
 			
-			
-		
-
 		private Node<T> rightRotate(Node<T> node){
 			Node<T> newRoot = node.left;
 			Node<T> swapChild = node.left.right;
@@ -181,6 +183,7 @@ public class AVL<T>{
 			return newRoot;
 		}
 		
+		//Simetrico
 		private Node<T> leftRotate(Node<T> node){
 			Node<T> newRoot = node.right;
 			Node<T> swapChild = node.right.left;
