@@ -36,7 +36,11 @@ public class AVL<T>{
 			Node(T value){	
 				this.value = value;
 				height = 0;
-			}			
+			}	
+			
+			void refreshHeight(){
+				height = 1 + Math.max(leftHeight(), rightHeight());
+			}
 
 	}
 
@@ -122,13 +126,14 @@ public class AVL<T>{
 				node.right = insert(node.right, elem);
 			}
 			
-			fixHeight(node); //Se llama de abajo para arriba: los hijos ya tienen siempre la altura nueva
-			
+			node.refreshHeight();	//Se llama de abajo para arriba: los hijos ya tienen siempre la altura nueva
+						
 			return balance(node); //Como es en profundidad, agarro primero al mas profundo que se desbalancea siempre
 		}
 
 		
 		/** Actualiza la altura de un nodo a partir de la altura de sus hijos */
+		@Deprecated //Lo pase a node.refreshHeight()
 		private void fixHeight(Node<T> node){
 			if(node == null) //No pasa, pero por las dudas
 				return;
@@ -177,8 +182,9 @@ public class AVL<T>{
 			newRoot.right = node;
 			node.left = swapChild;
 			
-			fixHeight(node);	//El orden importa, fixHeight(newRoot)
-			fixHeight(newRoot);	//depende de que node tenga bien su altura
+			
+			node.refreshHeight();
+			newRoot.refreshHeight();
 			
 			return newRoot;
 		}
@@ -191,14 +197,13 @@ public class AVL<T>{
 			newRoot.left = node;
 			node.right = swapChild;
 			
-			fixHeight(node);
-			fixHeight(newRoot);
+			node.refreshHeight();
+			newRoot.refreshHeight();
 			
 			return newRoot;
 		}
 
 		
-		//TODO: Delete de BST, falta el balanceo AVL
 		public void delete(T key){
 			root = delete(root, key);
 		}
@@ -238,7 +243,7 @@ public class AVL<T>{
 				}
 			}
 			
-			fixHeight(node);
+			node.refreshHeight();
 			return balance(node);
 		}
 
@@ -329,8 +334,6 @@ public class AVL<T>{
 			t.insert(15);
 			t.insert(16);
 			
-			t.delete(17);
-			t.delete(32);
 			
 			t.processInOrder(new NodeOperation<Integer>() {
 				
