@@ -4,16 +4,7 @@ import java.util.Comparator;
 
 public class Tree<T> {
 
-	private static class Node<T>{
-		private T value;
-		private Node<T> left;
-		private Node<T> right;
-		
-		public Node(T value){
-			this.value = value;
-		}
-	}
-		private Node<T> root;
+		Node<T> root;
 		
 		public void insert(T elem){
 			

@@ -6,16 +6,47 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class BinarySearchTree<T> extends Tree<T> {
-		
+
+/**
+ * Copia de BinarySearchTree con las funciones AVL 
+ * TODO: Herencia?
+ */
+public class AVL<T>{
+
+
+		private static class Node<T>{
+			T value;
+			Node<T> left;
+			Node<T> right;
+
+			int height;
+			
+			int balanceFactor(){
+				return leftHeight() - rightHeight();
+			}
+			
+			int leftHeight(){
+				return left == null ? -1 : left.height;
+			}
+			
+			int rightHeight(){
+				return right == null ? -1 : left.height;
+			}
+			
+			Node(T value){	
+				this.value = value;
+			}			
+
+	}
+
 		private Comparator<T> cmp;
-		
+		private Node<T> root;
 	
-		private BinarySearchTree(Node<T> root){
+		private AVL(Node<T> root){
 			this.root = root;
 		}
 		
-		public BinarySearchTree(Comparator<T> comparator){
+		public AVL(Comparator<T> comparator){
 			cmp = comparator;
 		}
 		
@@ -32,14 +63,14 @@ public class BinarySearchTree<T> extends Tree<T> {
 		
 		
 		
-		public BinarySearchTree<T> leftSubtree(){
+		public AVL<T> leftSubtree(){
 			assertNotEmpty();
-			return new BinarySearchTree<T>(root.left);
+			return new AVL<T>(root.left);
 		}
 		
-		public BinarySearchTree<T> rightSubtree(){
+		public AVL<T> rightSubtree(){
 			assertNotEmpty();
-			return new BinarySearchTree<T>(root.right);
+			return new AVL<T>(root.right);
 		}
 		
 		
@@ -89,10 +120,79 @@ public class BinarySearchTree<T> extends Tree<T> {
 			if(comp > 0){
 				node.right = insert(node.right, elem);
 			}
-			
-			return node;
+	
+			fixHeight(node); //Se llama de abajo para arriba: los hijos ya tienen siempre la altura nueva
+			return balance(node);
 		}
 
+		
+		private void fixHeight(Node<T> node){
+			if(node == null) //No pasa, pero por las dudas
+				return;
+			node.height = 1 + Math.max(node.leftHeight(), node.rightHeight());
+			}
+		
+		
+		private Node<T> balance(Node<T> node){
+			int bf = node.balanceFactor();
+			if(node == null || Math.abs(bf) < 1){
+					return node; // No hay que rebalancear
+			}
+			
+			if(bf > 0){ //Desbalance a la izquierda
+				if(node.left.balanceFactor() > 0){ //Doble izquierda: rotacion simple a derecha
+					node = rightRotate(node);
+				}
+				else{ //Rotacion primero a izquierda del hijo izquierdo y luego a izquierda del padre
+					node.left = leftRotate(node.left);
+					node = rightRotate(node);
+				}
+				
+			}
+			else{ //Desbalance a la derecha
+				if(node.right.balanceFactor() < 0){ //Doble derecha: rotacion simple a izquierda
+					node = leftRotate(node);
+				}
+				else{  //Rotacion primero a derecha del hijo derecho y luego a izquierda del padre
+					node.right = rightRotate(node.right);
+					node = leftRotate(node);
+				}
+			}
+		
+			return node;
+			
+		}
+			
+			
+		
+
+		private Node<T> rightRotate(Node<T> node){
+			Node<T> newRoot = node.left;
+			Node<T> swapChild = node.left.right;
+		
+			newRoot.right = node;
+			node.left = swapChild;
+			
+			fixHeight(node);	//El orden importa, fixHeight(newRoot)
+			fixHeight(newRoot);	//depende de que node tenga bien su altura
+			
+			return newRoot;
+		}
+		
+		private Node<T> leftRotate(Node<T> node){
+			Node<T> newRoot = node.right;
+			Node<T> swapChild = node.right.left;
+		
+			newRoot.left = node;
+			node.right = swapChild;
+			
+			fixHeight(node);
+			fixHeight(newRoot);
+			
+			return newRoot;
+		}
+
+		
 		
 		public void delete(T key){
 			root = delete(root, key);
