@@ -243,7 +243,7 @@ public class AVL<T>{
 				}
 			}
 			
-			if(node != null){	// Llegue a la hoja
+			if(node != null){	// Si no llegue a la hoja en el else
 				node.refreshHeight();
 			}
 			return balance(node);
