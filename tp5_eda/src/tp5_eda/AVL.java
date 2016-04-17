@@ -30,11 +30,12 @@ public class AVL<T>{
 			}
 			
 			int rightHeight(){
-				return right == null ? -1 : left.height;
+				return right == null ? -1 : right.height;
 			}
 			
 			Node(T value){	
 				this.value = value;
+				height = 0;
 			}			
 
 	}
@@ -120,8 +121,9 @@ public class AVL<T>{
 			if(comp > 0){
 				node.right = insert(node.right, elem);
 			}
-	
+			
 			fixHeight(node); //Se llama de abajo para arriba: los hijos ya tienen siempre la altura nueva
+		//	System.out.println("Node: " + node.value + " height: " + node.height);
 			return balance(node);
 		}
 
@@ -135,7 +137,7 @@ public class AVL<T>{
 		
 		private Node<T> balance(Node<T> node){
 			int bf = node.balanceFactor();
-			if(node == null || Math.abs(bf) < 1){
+			if(node == null || Math.abs(bf) <= 1){
 					return node; // No hay que rebalancear
 			}
 			
@@ -193,7 +195,7 @@ public class AVL<T>{
 		}
 
 		
-		
+		//TODO: Delete de BST, falta el balanceo AVL
 		public void delete(T key){
 			root = delete(root, key);
 		}
@@ -252,114 +254,6 @@ public class AVL<T>{
 		
 		
 		
-/*		Ejercicio 7: Agregarle a la interfaz del BinarySearchTree métodos para resolver las siguientes operaciones:
-
-			a. Dado un valor obtener el nivel que ocupa en el árbol (si el elemento no existe retorna -1).
-
-			b. Determinar cuántas hojas tiene.
-
-			c. Buscar el mayor elemento.
-
-			d. Imprimir todos los antecesores de un determinado nodo.
-
-			e. Imprimir todos los descendientes de un determinado nodo. */
-
-		
-		//a
-		public int whichLevel(T key){
-			return whichLevel(root, key, 0);
-		}
-		private int whichLevel(Node<T> node, T key, int lvl){
-			if(node == null)
-				return -1;
-			
-			int c = cmp.compare(key, node.value);
-			if(c > 0)
-				return whichLevel(node.right, key, ++lvl);
-			else if(c < 0)
-				return whichLevel(node.left, key, ++lvl);
-			else
-				return lvl;
-			
-		}
-		
-		
-		//b
-		public int numberOfLeaves(){
-			return numberOfLeaves(root);
-		}
-		
-		private int numberOfLeaves(Node<T> node){
-			if(node == null)
-				return 0;
-			
-			if(node.right == null && node.left == null)
-				return 1;
-			else
-				return numberOfLeaves(node.left) + numberOfLeaves(node.right);
-			
-		}
-		
-		//c 
-		public T greatestElem(){
-			if(root == null)
-				return null;
-			Node<T> curr = root;
-			while(curr.right != null)
-				curr = curr.right;
-			return curr.value;
-		}
-		
-		
-		//d
-		public void printAncestors(T key){
-			List<T> list = new ArrayList<T>();
-			Node<T> curr = root;
-			while(curr != null && !curr.value.equals(key)){
-				list.add(curr.value);
-				int c = cmp.compare(key, curr.value);
-				if(c < 0){
-					curr = curr.left;
-				}
-				else{
-					curr = curr.right;
-				}
-			}
-			if(curr != null)
-				for(T t: list)
-					System.out.println(t);
-			
-		}
-		
-		public void printDescendants(T key){
-			boolean found = false;
-			Node<T> curr = root;
-			while(curr != null && !found){
-				int c = cmp.compare(key, curr.value);
-				if(c == 0){
-					found = true;
-				}
-				else if(c < 0){
-					curr = curr.left;
-				}
-				else{
-					curr = curr.right;
-				}
-			}
-			
-			if(curr != null){
-				NodeOperation<T> print = new NodeOperation<T>() {
-			
-				@Override
-				public void apply(T value) {
-						System.out.println(value);
-					}
-				
-				};
-			processInOrder(curr.left, print);
-			processInOrder(curr.right, print);
-			}			
-		}
 		
 		/*Ejercicio 9
  		Agregarle al árbol binario de búsqueda métodos que permitan construir iteradores para obtener los
@@ -411,7 +305,7 @@ public class AVL<T>{
 		
 		
 		public static void main(String[] args) {
-			BinarySearchTree<Integer> t = new BinarySearchTree<Integer>(new Comparator<Integer>() {
+			AVL<Integer> t = new AVL<Integer>(new Comparator<Integer>() {
 
 				@Override
 				public int compare(Integer o1, Integer o2) {
@@ -419,22 +313,25 @@ public class AVL<T>{
 				}
 				
 			});
-			t.insert(16);
-			t.insert(14);
+			t.insert(17);
+			t.insert(13);
 			t.insert(4);
 			t.insert(10);
 			t.insert(-0);
 			t.insert(29);
-			t.insert(16);
 			t.insert(32);
-		/*	t.processInOrder(new NodeOperation<Integer>() {
+			t.insert(14);
+			t.insert(15);
+			t.insert(16);
+			t.processInOrder(new NodeOperation<Integer>() {
 				
 				@Override
 				public void apply(Integer value) {
 					System.out.println(value);					
 				}
 			});
-		*/
+		
+			System.out.println("===================");
 			//t.printDescendants(16);
 			Iterator<Integer> iterator = t.preOrderIterator();
 			
