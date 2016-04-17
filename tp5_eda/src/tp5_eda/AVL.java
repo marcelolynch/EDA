@@ -243,7 +243,9 @@ public class AVL<T>{
 				}
 			}
 			
-			node.refreshHeight();
+			if(node != null){	// Llegue a la hoja
+				node.refreshHeight();
+			}
 			return balance(node);
 		}
 
@@ -334,6 +336,10 @@ public class AVL<T>{
 			t.insert(15);
 			t.insert(16);
 			
+			t.delete(17);
+			t.delete(1);
+			t.delete(34);
+			t.delete(10);
 			
 			t.processInOrder(new NodeOperation<Integer>() {
 				
