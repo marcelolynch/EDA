@@ -130,6 +130,34 @@ public class Tree<T> {
 			return heights[0] < heights[1] ? heights[1] : heights[0];
 		}
 		
+
+		
+		
+		public static <T> boolean checkPostOrdered(Tree<T> t, Comparator<T> cmp){
+			if(t.root == null)
+				return true;
+			return checkPostOrdered(t.root, null, cmp) != null;
+		}
+
+
+		private static <T> T checkPostOrdered(Node<T> node, T lastPost, Comparator<T> cmp) {
+			if(node.left == null && node.right == null)
+				return node.value;
+			if(node.left != null){
+				lastPost = checkPostOrdered(node.left, lastPost, cmp);
+				if(lastPost == null)
+					return null;
+			}
+			if(node.right != null){
+				lastPost = checkPostOrdered(node.right, lastPost, cmp);
+				if(lastPost == null)
+					return null;
+			}
+			if(cmp.compare(node.value, lastPost) >= 0)
+				return node.value;
+			else
+				return null;
+		}
 		
 			
 }

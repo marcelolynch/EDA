@@ -9,7 +9,6 @@ import java.util.NoSuchElementException;
 
 /**
  * Copia de BinarySearchTree con las funciones AVL 
- * TODO: Herencia?
  */
 public class AVL<T>{
 
