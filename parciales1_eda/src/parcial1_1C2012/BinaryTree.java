@@ -1,5 +1,7 @@
 package parcial1_1C2012;
 
+import java.util.Comparator;
+
 public class BinaryTree<T> {
 	private T value;
 	private BinaryTree<T> left, right;
@@ -46,4 +48,28 @@ public class BinaryTree<T> {
 		}
 		
 	}
+	
+	
+	
+//	Implementar un método que dado un árbol binario (clase BinaryTree del ejercicio anterior) y un
+//	comparador, retorne true si el árbol cumple con la definición de heap, y false en caso contrario
+	
+	
+//	private T isHeap(BinaryTree<T> t, Comparator<T> cmp){
+//		if((BinaryTree<T> left = t.getLeft()) == null){
+//			if(t.getRight() != null) // No cumple
+//				return null;
+//			else{
+//				if(cmp.compare(left.value, ))
+//			}
+				
+				
+//		}
+		
+	//}
+	public static void main(String[] args) {
+		for(int i = 0 ; i < 100 ; i++)
+			System.out.println("" + (int)Math.pow(2*i+1, 4) % 120 + " ");
+	}
+	
 }
