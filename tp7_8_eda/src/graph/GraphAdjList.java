@@ -2,9 +2,12 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import graph.GraphAdjList.Node;
 
 /**
  * 
@@ -178,6 +181,19 @@ public abstract class GraphAdjList<V, E extends ArcGraph> {
 	public int vertexCount() {
 		return nodes.size();
 	}
+	
+	
+	protected Node nextUnvisited(Iterator<Node> iter){
+		Node n = null;
+		while(iter.hasNext()){
+			n = iter.next();
+			if(!n.visited){
+				return n;
+			}
+		}
+		return null;
+	}
+
 
 	protected List<Node> getNodes() {
 		return nodeList;

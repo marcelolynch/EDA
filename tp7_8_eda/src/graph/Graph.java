@@ -2,9 +2,13 @@ package graph;
 
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 
@@ -268,9 +272,12 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 			if(!friendlyNode(n)){
 				return false;
 			}
-			
-			return isConnected();
+
 		}
+
+		return isConnected();
+
+	
 	}
 	
 	
@@ -329,6 +336,103 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 		return friends;
 	}
 	
+	
+	private class PQNode implements Comparable<PQNode>{
+		Node node;
+		Node prev;
+		Arc arc;
+		double weight;
+		
+		public PQNode(Node node, Node prev, Arc arc, double weight){
+			this.node = node;
+			this.prev = prev;
+			this.arc = arc;
+			this.weight = weight;
+		}
+		
+		public int compareTo(PQNode other){
+			if(other == null) return 1;
+			return Double.compare(weight, other.weight);
+		}
+	}
+	
+	public Graph<V,ArcGraph> minPathTree(V origin){
+		
+		Node n = nodes.get(origin);
+		if(n == null) throw new IllegalArgumentException("No such vertex");
+		clearMarks();
+		
+		Graph<V,ArcGraph> tree = new Graph<>();
+		PriorityQueue<PQNode> pq = new PriorityQueue<PQNode>();
+		pq.offer(new PQNode(n, null, null, 0));
+		while(!pq.isEmpty()){
+			PQNode pqn = pq.poll();
+			if(!pqn.node.visited){
+				pqn.node.visited = true;
+				tree.AddVertex(pqn.node.info);
+				if(pqn.prev != null){
+					tree.addArc(pqn.node.info, pqn.prev.info, pqn.arc.info);
+				}
+				for(Arc a: pqn.node.adj){
+					if(!a.neighbor.visited){
+						pq.offer(new PQNode(a.neighbor, pqn.node, a, pqn.weight + a.info.getValue()));
+					}
+				}
+			}
+			
+		}
+		return tree;
+	}
+	
+	
+	private class ArcEnds{
+		Arc arc;
+		
+		Node from;
+		Node to;
+
+		public ArcEnds(Node n, Arc a){
+			from = n;
+			this.arc = a;
+		}
+	}
+	
+	public Graph<V, ArcGraph> minWeightTree(){
+			
+		Graph<V,ArcGraph> ans = new Graph<V,ArcGraph>();
+		if(nodeList.isEmpty())
+			return ans;
+		
+		clearMarks();	
+		Set<Node> visited = new HashSet<>();
+		visited.add(nodeList.get(0));
+		
+		while(ans.vertexCount() < vertexCount()){
+			ArcEnds minArc = findMinFrontierArc(visited);
+			ans.addArc(minArc.from.info, minArc.arc.neighbor.info, minArc.arc.info);
+		}
+		return ans;
+		
+	}
+	
+	
+	private ArcEnds findMinFrontierArc(Set<Node> from) {
+		ArcEnds min = null;
+		for(Node n: from){
+			for(Arc a: n.adj){
+				if((min == null || Double.compare(a.info.getValue(), min.arc.info.getValue()) < 0)
+						&& !from.contains(a.neighbor)){
+		
+						min = new ArcEnds(n, a);
+						
+					}
+					
+				}
+			}
+		return min;
+	}
+	
+
 	public static void main(String[] args) {
 		Graph<Integer, ?> graph = new Graph<>();
 		graph.AddVertex(1);
