@@ -170,12 +170,13 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 		n.visited = true;
 		for(Arc a: n.adj){
 			Node next = a.neighbor;
-			if(next.visited && !next.equals(prev))
-				return false;
-			if(!isTree(next, n))
-				return false;
+			if(next.visited){
+				if(next.equals(prev))
+					return false;
+			}
+			else if(!isTree(next, n))
+					return false;
 		}
-		
 		return true;
 	}
 	
@@ -387,9 +388,7 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 	
 	private class ArcEnds{
 		Arc arc;
-		
 		Node from;
-		Node to;
 
 		public ArcEnds(Node n, Arc a){
 			from = n;
@@ -407,10 +406,14 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 		Set<Node> visited = new HashSet<>();
 		visited.add(nodeList.get(0));
 		
+		ans.AddVertex(nodeList.get(0).info);
 		while(ans.vertexCount() < vertexCount()){
 			ArcEnds minArc = findMinFrontierArc(visited);
+			ans.AddVertex(minArc.arc.neighbor.info);
 			ans.addArc(minArc.from.info, minArc.arc.neighbor.info, minArc.arc.info);
+			visited.add(minArc.arc.neighbor);
 		}
+		
 		return ans;
 		
 	}
@@ -422,9 +425,7 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 			for(Arc a: n.adj){
 				if((min == null || Double.compare(a.info.getValue(), min.arc.info.getValue()) < 0)
 						&& !from.contains(a.neighbor)){
-		
 						min = new ArcEnds(n, a);
-						
 					}
 					
 				}
@@ -432,9 +433,22 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 		return min;
 	}
 	
+	
+	
+	public void printFromNode(V v){
+		DFS(nodes.get(v), new Function<V>(){
+
+			@Override
+			public V apply(V v) {
+				System.out.println(v);
+				return v;
+			}
+			
+		});
+	}
 
 	public static void main(String[] args) {
-		Graph<Integer, ?> graph = new Graph<>();
+		Graph<Integer, MyArc> graph = new Graph<>();
 		graph.AddVertex(1);
 		graph.AddVertex(2);
 		graph.AddVertex(3);
@@ -443,19 +457,21 @@ public class Graph<V, E extends ArcGraph> extends GraphAdjList<V, E> {
 		graph.AddVertex(6);
 		graph.AddVertex(7);
 
-		graph.addArc(1, 2, null);
-		graph.addArc(2, 3, null);
-		graph.addArc(3, 7, null);
-		graph.addArc(1, 6, null);
-		graph.addArc(6, 7, null);
-		graph.addArc(1, 4, null);
-		graph.addArc(4, 5, null);
-		graph.addArc(4, 6, null);
-		graph.addArc(6, 5, null);
-		graph.addArc(4, 2, null);
+		graph.addArc(1, 2, new MyArc(3));
+		graph.addArc(2, 3, new MyArc(1));
+		graph.addArc(3, 7, new MyArc(6));
+		graph.addArc(1, 6, new MyArc(4));
+		//graph.addArc(6, 7, new MyArc(5));
+		graph.addArc(1, 4, new MyArc(2));
+		graph.addArc(4, 5, new MyArc(5));
+	//	graph.addArc(4, 6, new MyArc(6));
+		graph.addArc(6, 5, new MyArc(2));
+		graph.addArc(3, 6, new MyArc(7));
+		//graph.addArc(4, 2, new MyArc(4));
 		
+		System.out.println(graph.isBipartite());
 
-		System.out.println(graph.possibleFriends(1,3));
+		graph.minWeightTree().printFromNode(6);
 		
 	}
 }

@@ -28,7 +28,7 @@ public class BetterFibonacci {
 		long tock;
 		
 		tick = System.nanoTime();
-		System.out.println(badFibonacci(45));
+		System.out.println(badFibonacci(40));
 		tock = System.nanoTime();
 		System.out.println("Bad:" + (tock-tick)/1000000.0);
 		

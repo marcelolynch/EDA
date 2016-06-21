@@ -120,6 +120,63 @@ public class Graph<V>{
 	}
 	
 	
+	
+	private class Coloring{
+		Map<Node, Integer> colors = new HashMap<>();
+		
+		public Coloring(){
+			trivialFill();
+		}
+		
+		private void trivialFill(){
+			int i = 0;
+			for(Node n: colors.keySet()){
+				colors.put(n, i++);
+			}
+		}
+		
+		public Coloring clone(){
+			Coloring clone = new Coloring();
+			clone.colors = new HashMap<>(colors);
+			return clone;
+		}
+		
+		
+		public List<Coloring> neighbors(){
+			List<Coloring> n = new ArrayList<Coloring>();
+			for(Node node: colors.keySet()){
+				int color = colors.get(node);
+				if(color > 0){
+					if(!neighborInConflict(node,color)){
+						Coloring potential = clone();
+						potential.colors.put(node, color-1);
+						n.add(potential);
+					}
+				}
+			}
+			return n;
+		}
+		
+		
+		/**Hill climbing : coloreo */
+		public int minColorAprox(int iterations){
+			Coloring max;
+			Coloring current = new Coloring();
+		}
+		
+		
+		private boolean neighborInConflict(Node node, int color){
+			for(Arc a: node.adj){
+				if(colors.get(a.neighbor) == color - 1)
+					return true;
+			}
+			return false;
+		}
+	}
+	
+	
+	
+	
 	public static void main(String[] args) {
 
 		Graph<String> graph = new Graph<String>();
